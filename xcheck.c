@@ -22,7 +22,7 @@ int valid_inode(u16 inode_t) {
 }
 
 // checking bitmap, if inode allocated, but marked free, return false, else true
-int check_inode_bitmap(u32 data_block, filecheck fc) {
+int block_bitmap_set(u32 data_block, filecheck fc) {
     u8 *bitmap = (u8 *)(fc.file_image + (BSIZE * BMAPSTART));
     u32 byte_index = data_block / 8;
     u32 bit_offset = data_block % 8;
@@ -41,7 +41,7 @@ void valid_direct_block(dinode *inode, filecheck fc) {
             exit(1);
         }
 
-        if (!check_inode_bitmap(data_block, fc)) {
+        if (!block_bitmap_set(data_block, fc)) {
             fprintf(stderr, "ERROR: address used by inode but marked free in bitmap.\n");
             exit(1);
         }
@@ -61,7 +61,7 @@ void valid_indirect_block(u32 *indirect_block, filecheck fc) {
             exit(1);
         }
 
-        if (!check_inode_bitmap(data_block, fc)) {
+        if (!block_bitmap_set(data_block, fc)) {
             fprintf(stderr, "ERROR: address used by inode but marked free in bitmap.\n");
             exit(1);
         }
